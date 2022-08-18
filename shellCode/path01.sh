@@ -1,5 +1,5 @@
-cd /home/lbdbot01/catkin_ws
-source /home/lbdbot01/catkin_ws/devel/setup.sh
+cd /home/lbdbot/catkin_ws
+source /home/lbdbot/catkin_ws/devel/setup.sh
 
 
 rostopic pub --once RCmd std_msgs/UInt16 "data: 88"

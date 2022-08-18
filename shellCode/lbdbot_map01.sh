@@ -1,5 +1,5 @@
 
-cd /home/lbdbot01/catkin_ws
+cd /home/lbdbot/catkin_ws
 source ./devel/setup.sh
 
 sleep 5
