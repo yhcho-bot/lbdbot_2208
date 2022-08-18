@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<robot name="lbdbot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="M_PI" value="3.1415926535897931" /> 
+  <!-- Robot -->
+  <xacro:macro name="lbdbot">
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <parent link="base_footprint"/>
+      <child link="base_link" />
+    </joint>
+
+    <link name="base_link">
+      <visual>
+        <geometry>
+          <!-- new mesh -->
+          <box size="0.4 0.38 0.3"/>
+        </geometry>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      </visual>
+      <inertial>
+        <!-- COM experimentally determined -->
+        <origin xyz="0 0 0"/>
+        <mass value="10.0"/> <!-- measure required-->
+        <!-- robot's inertia tensor is approximated by a box with homogeneous mass distribution
+             More details: http://en.wikipedia.org/wiki/List_of_moment_of_inertia_tensors
+             m = 10 kg; w = 0.4 m; d = 0.4 m; h = 0.3 m;
+             ixx = 1/12 * m * (d^2 + h^2)
+             iyy = 1/12 * m * (d^2 + w^2)
+             izz = 1/12 * m * (w^2 + h^2)
+          -->
+        <inertia ixx="0.208333" ixy="0.0" ixz="0.0"
+                 iyy="0.266667" iyz="0.0"
+                 izz="0.208333" />
+      </inertial>
+    </link>
+
+    <joint name="wheel_left_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="wheel_left_link"/>
+      <origin xyz="0.1 0.2 0.090" rpy="${-M_PI/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="wheel_left_link">
+      <visual>
+        <geometry>
+          <cylinder length="0.04" radius="0.09"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder length="0.04" radius="0.09"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+      </collision>
+      <inertial>
+        <mass value="0.5" />
+        <origin xyz="0 0 0" />
+
+                <!-- robot wheel's inertia tensor is approximated by a cylinder with homogeneous mass distribution
+             More details: http://en.wikipedia.org/wiki/List_of_moment_of_inertia_tensors
+             m = 0.5 kg; r = 0.09 m; h = 0.025 m; 
+             ixx = 1/12 * m * (3 * r^2 + h^2)
+             iyy = 1/12 * m * (3 * r^2 + h^2)
+             izz = 1/2 * m * (r^2)
+          -->
+        <inertia ixx="0.001039" ixy="0.0" ixz="0.0"
+                 iyy="0.001039" iyz="0.0"
+                 izz="0.002025" />
+      </inertial>
+    </link>
+
+    <joint name="wheel_right_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="wheel_right_link"/>
+      <origin xyz="0.1 -0.2 0.090" rpy="${-M_PI/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="wheel_right_link">
+      <visual>
+        <geometry>
+           <cylinder length="0.04" radius="0.09"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder length="0.04" radius="0.09"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+      </collision>
+      <inertial>
+        <mass value="0.5" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.001039" ixy="0.0" ixz="0.0"
+                 iyy="0.001039" iyz="0.0"
+                 izz="0.002025" />
+      </inertial>
+    </link>
+
+    <joint name="caster_back_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="caster_back_link"/>
+      <origin xyz="-0.2 0 0.02" rpy="${-M_PI/2} 0 0"/>
+    </joint>
+
+    <link name="caster_back_link">
+      <collision>
+        <geometry>
+          <cylinder length="0.02" radius="0.025"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+      </collision>
+      <inertial>
+        <mass value="0.01" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0"
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+  </xacro:macro>
+</robot>

@@ -1,0 +1,45 @@
+local_costmap:
+   global_frame: map
+   robot_base_frame: base_link
+   update_frequency: 5.0
+   publish_frequency: 2.0
+   #static_map: true
+   rolling_window: true
+   width: 5.0
+   height: 5.0
+   resolution: 0.01
+   transform_tolerance: 0.5
+   #robot_radius : 0.23
+   footprint_padding : 0.05
+   #plugins: ["inflation_layer", "obstacle_layer"]
+   plugins:
+     - {name: static_layer,       type: "costmap_2d::StaticLayer"}
+     - {name: inflation_layer,    type: "costmap_2d::InflationLayer"}
+     - {name: obstacle_layer,     type: "costmap_2d::ObstacleLayer"}
+
+   static_layer:
+     enabled: true
+     subscribe_to_updates: False
+     transform_tolerance: 0.5
+     map_topic: map
+   inflation_layer:
+     #plugin: "costmap_2d::InflationLayer"
+     enabled: true
+     cost_scaling_factor: 10.0
+     inflation_radius: 0.4
+     inflate_unknown: false
+   obstacle_layer:
+     #plugin: "costmap_2d::ObstacleLayer"
+     enabled: true
+     footprint_clearing_enabled: true
+     max_obstacle_height: 0.6
+     unknown_threshold: 15
+     mark_threshold: 0
+     orgin_z: 0
+     z_resolution: 0.2
+     z_voxels: 2
+     combination_method: 1
+     observation_sources: scan depthCloud
+     scan: {data_type: LaserScan, topic: scan, marking: true, clearing: true}
+     depthCloud: {data_type: PointCloud2, topic: camera/depth/color/points, clearing: true, marking: true}
+

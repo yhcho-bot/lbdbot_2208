@@ -1,0 +1,19 @@
+# obstacle_range: The maximum range in meters at which to insert obstacles 
+#                 into the costmap using sensor data
+obstacle_range: 3.0
+raytrace_range: 5.0
+robot_radius: 0.23
+#inflation_radius:The radius in meters to which the map inflates obstacle cost value
+inflation_radius: 0.30
+#inflation_radius: 0.5
+
+map_type: voxel
+origin_z: 0.0
+z_resolution: 0.2
+z_voxels: 2
+publish_voxel_map: true
+max_obstacle_height: 0.50
+
+observation_sources: scan depthCloud
+scan: {data_type: LaserScan, topic: scan, marking: true, clearing: true, min_obstacle_height: 0.25, max_obstacle_height: 0.45}
+depthCloud: {data_type: PointCloud2, topic: camera/depth/color/points, marking: true, clearing: true, min_obstacle_height: 0.0, max_obstacle_height: 1.5}

@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<robot name="lbdbot_standalone" xmlns:xacro="http://ros.org/wiki/xacro">
+ 
+  <xacro:include filename="$(find lbdbot_launch)/urdf/lbdbot.urdf.xacro"/>  
+
+  <xacro:lbdbot/>
+</robot>
