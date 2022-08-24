@@ -24,7 +24,7 @@ sleep 3
 roslaunch rplidar_ros rplidar_lbd.launch &
 
 sleep 3
-roslaunch lbdbot_launch rs_camera_lbd.launch &
+roslaunch lbdbot_launch rs_multi_camera_lbd.launch &
 
 cd /home/lbdbot/catkin_ws
 
