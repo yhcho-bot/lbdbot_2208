@@ -46,6 +46,30 @@ int main(int argc, char** argv){
             )
         );
 
+        broadcaster.sendTransform(
+            tf::StampedTransform(
+                tf::Transform(
+    //                tf::Quaternion(0,0,0.9999996829318346,0.00079632671073326), 
+                    tf::Quaternion(0,0.3420201,0,0.9396926), 
+                    tf::Vector3(0.15, 0.0, 0.850)),
+                ros::Time::now(),
+                "base_link",
+                "camera1_link"
+            )
+        );
+                broadcaster.sendTransform(
+            tf::StampedTransform(
+                tf::Transform(
+    //                tf::Quaternion(0,0,0.9999996829318346,0.00079632671073326), 
+                    tf::Quaternion(0,-0.3420201,0,0.9396926), 
+                    tf::Vector3(0.15, 0, 0.15)),
+                ros::Time::now(),
+                "base_link",
+                "camera2_link"
+            )
+        );
+
+
      //   broadcaster.sendTransform(
     //        tf::StampedTransform(
     //            tf::Transform(
