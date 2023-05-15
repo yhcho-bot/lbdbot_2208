@@ -1,0 +1,42 @@
+#! /bin/bash
+
+source /home/lbdbot01/catkin_ws/devel/setup.sh
+
+sleep 10
+cd /home/lbdbot01/catkin_ws 
+roscore &
+
+sleep 8
+rosrun lbdbot_tf lbdbot_tf_node &
+
+sleep 20
+roslaunch lbdbot_launch rs_multi_camera_lbd.launch &
+
+sleep 20
+roslaunch md md.launch &
+
+sleep 5
+rosrun imu_filter_madgwick imu_filter_node \
+    _use_mag:=false \
+    __name:="cam_node1" \
+    _publish_tf:=false \
+    _world_frame:="enu" \
+    /imu/data_raw:=/camera1/imu \
+    /imu/data:=/rtabmap1/imu &
+
+sleep 5
+rosrun imu_filter_madgwick imu_filter_node \
+    _use_mag:=false \
+    __name:="cam_node2"\
+    _publish_tf:=false \
+    _world_frame:="enu" \
+    /imu/data_raw:=/camera2/imu \
+    /imu/data:=/rtabmap2/imu &
+
+cd /home/lbdbot01/catkin_ws
+
+sleep 10
+roslaunch lbdbot_launch lbd_rtabmap_t.launch &
+
+sleep 8
+rosrun speed_btn speed_btn
