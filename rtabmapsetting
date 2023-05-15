@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<launch>
+   
+    <arg name="localization" default="false"/> <!-- comment for changing-->
+    <arg name="rtabmapviz"   default="false"/>
+    <arg name="ground_truth" default="false"/>
+    
+    <arg     if="$(arg localization)" name="pre_args" default=""/>
+    <arg unless="$(arg localization)" name="pre_args" default="-d"/>
+   <!--   
+    <node pkg="nodelet" type="nodelet" name="imu_to_tf" args="standalone rtabmap_ros/imu_to_tf">
+      <remap from="camera2/imu" to="/camera2/imu"/>
+      <param name="fixed_frame_id" value="map"/>
+      <param name="base_frame_id" value="base_link"/>
+    </node>
+    -->
+    <!-- To connect rtabmap planning stuff with move_base below -->
+    <param name="/rtabmap/rtabmap/use_action_for_goal" value="true"/>
+    <remap from="/rtabmap/move_base" to="/move_base"/>
+
+    <!-- VSLAM -->
+    <param name="/rtabmap/rtabmap/latch" value="false"/> <!-- For some reason, if we latch grid_map, the global costmap inflation layer will create holes on robot path. To avoid holes, republish grid_map on each update (latching disabled). -->
+    <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+      <arg name="namespace"         value="rtabmap1"/>
+      <arg name="localization"      value="$(arg localization)"/>
+      <arg name="args"              value="$(arg pre_args) --Optimizer/GravitySigma 0.1" />
+      <arg name="rtabmapviz"        value="$(arg rtabmapviz)" /> 
+      <arg name="frame_id"          value="base_footprint" />
+      <arg name="odom_guess_frame_id" value="base_footprint" />
+      <arg name="rgb_topic"         value="/camera1/color/image_raw" />
+      <arg name="depth_topic"       value="/camera1/aligned_depth_to_color/image_raw" />
+      <arg name="camera_info_topic" value="/camera1/color/camera_info" />
+      <arg name="imu_topic"         value="/rtabmap1/imu"/>
+      <arg name="wait_imu_to_init"  value="true"/>
+      <arg name="approx_sync"       value="true"/>
+      <arg if="$(arg ground_truth)" name="ground_truth_frame_id" value="map"/>
+      <arg if="$(arg ground_truth)" name="ground_truth_base_frame_id" value="base_link"/>
+    </include>
+
+    <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+      <arg name="namespace"         value="rtabmap2"/>
+      <arg name="localization"      value="$(arg localization)"/>
+      <arg name="args"              value="$(arg pre_args) --Optimizer/GravitySigma 0.1" />
+      <arg name="rtabmapviz"        value="$(arg rtabmapviz)" /> 
+      <arg name="frame_id"          value="base_footprint" />
+      <arg name="odom_guess_frame_id" value="base_footprint" />
+      <arg name="rgb_topic"         value="/camera2/color/image_raw" />
+      <arg name="depth_topic"       value="/camera2/aligned_depth_to_color/image_raw" />
+      <arg name="camera_info_topic" value="/camera2/color/camera_info" />
+      <arg name="imu_topic"         value="/rtabmap2/imu"/>
+      <arg name="wait_imu_to_init"  value="true"/>
+      <arg name="approx_sync"       value="true"/>
+      <arg if="$(arg ground_truth)" name="ground_truth_frame_id" value="map"/>
+      <arg if="$(arg ground_truth)" name="ground_truth_base_frame_id" value="base_link"/>
+    </include>
+
+    <!-- Costmap -->
+    <!--
+    <node pkg="nodelet" type="nodelet" name="camera_points_xyz" args="standalone rtabmap_ros/point_cloud_xyz">
+      <remap from="depth/image"       to="/camera2/aligned_depth_to_color/image_raw"/>
+      <remap from="depth/camera_info" to="/camera2/depth/camera_info"/>
+      <remap from="cloud"             to="camera_cloud" />
+
+      <param name="decimation"  type="double" value="4"/>
+      <param name="voxel_size"  type="double" value="0.0"/>
+      <param name="approx_sync" type="bool"   value="true"/>
+    </node> 
+   -->
+
+    <!-- navigation -->  
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+       <remap from="map" to="/rtabmap2/grid_map"/>
+       <remap from="odom" to="odom"/>
+   <!--    <remap from="odom" to="/rtabmap/odom"/> -->
+       <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />  
+       <rosparam file="$(find lbdbot_launch)/param/rtab_costmap_common_params.yaml" command="load" ns="global_costmap" />
+       <rosparam file="$(find lbdbot_launch)/param/rtab_costmap_common_params.yaml" command="load" ns="local_costmap" />
+       <rosparam file="$(find lbdbot_launch)/param/rtab_global_costmap_params.yaml" command="load" />
+       <rosparam file="$(find lbdbot_launch)/param/rtab_local_costmap_params.yaml" command="load" />
+       <rosparam file="$(find lbdbot_launch)/param/rtab_base_local_planner_params.yaml" command="load" />
+    </node>
+<!--
+   <node name="empty_voxels_markers" pkg="rtabmap_ros" type="voxel_markers" args="voxel_grid:=/move_base/local_costmap/voxel_layer/voxel_grid visualization_marker:=/voxels_empty">
+       <param name="cell_type" value="0"/>
+   </node>
+   <node name="marked_voxels_markers" pkg="rtabmap_ros" type="voxel_markers" args="voxel_grid:=/move_base/local_costmap/voxel_layer/voxel_grid visualization_marker:=/voxels_marked" />
+-->
+</launch>
